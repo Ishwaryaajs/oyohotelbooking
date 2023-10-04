@@ -68,7 +68,7 @@ function Login() {
             <input
               className="form-check-input"
               type="checkbox"
-              name="roomAvailable"
+              name="ShowPassword"
               onChange={() => {
                 setPwtVisibility(!PwtVisibility);
               }}
