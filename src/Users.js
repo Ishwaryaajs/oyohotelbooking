@@ -1,6 +1,7 @@
 import {React,useState, useEffect,useRef } from 'react';
 import axios from 'axios';
-import { Link,useNavigate } from 'react-router-dom'
+import { Link,useNavigate } from 'react-router-dom';
+import backgroundImage from './hotelimages/splash.jpg';
 export function PostUsers()
 {
   const [users, setusers] = useState([]);
@@ -10,7 +11,7 @@ export function PostUsers()
 
     const getUser = async () => {
     try {
-       // const response = await fetch('https://localhost:44328/api/User/GetUser');
+      
       let token = localStorage.getItem("Token");
       let UserId = localStorage.getItem("UserId");
       let IsAdmin = localStorage.getItem("IsAdmin");
@@ -50,17 +51,30 @@ export function PostUsers()
   
     }
     
- 
+  
     const isAdmin = localStorage.getItem("IsAdmin") === "false";
+const cardStyle={
+  border: '1px solid #ccc', 
+    borderRadius: '5px',
+    margin: '10px',
+    padding: '10px',
+    backgroundImage: `url(${backgroundImage})`, 
+    backgroundSize: 'cover',
+}
+const cardBodyStyle = {
+  textAlign: 'center', 
+};
+
 
     return (
-      <div>
+      <div >
         {isUserAvailable ? (
           <div className="row">
             {users.map((item, i) => (
-              <div key={i} className="col-md-4">
-                <div className="card mb-4">
-                  <div className="card-body">
+              <div key={i} className={`col-md-4${!isAdmin ? '' : ' mx-auto'}`}>
+                 
+                <div className="card mb-4" style={cardStyle}>
+                  <div className="card-body" style={cardBodyStyle}>
                     <h3 className="card-title">{item.userName}</h3>
                     <p className="card-text">Email: {item.userEmail}</p>
                     <p className="card-text">Password: {item.userPassword}</p>
@@ -71,7 +85,7 @@ export function PostUsers()
                       onClick={() => {
                         OnEdit(item);
                       }}
-                      className="btn btn-success"
+                      className="btn btn-outline-success btn-sm m-2"
                     >
                       Edit
                     </button>
@@ -79,6 +93,7 @@ export function PostUsers()
                   </div>
                 </div>
               </div>
+              
             ))}
           </div>
         ) : (
@@ -100,12 +115,3 @@ export function Users()
     </div>
   );
 }
-//<th className="p-1">Action</th>
-//<button type="button" onClick={() => { OnDelete(item.userId) }} className="btn btn-outline-danger btn-sm">Delete</button>
-//<button type="button" onClick={() => { OnEdit(item) }} className="btn btn-outline-success btn-sm">Edit</button>
-//<button onClick={OnClick} className="btn btn-primary ms-4">Add New User</button>
-//<td className="p-1">
-//<button type="button" onClick={() => { OnDelete(item.userId) }} className="btn btn-outline-danger btn-sm">Delete</button>
-//<button type="button" onClick={() => { OnEdit(item) }} className="btn btn-outline-success btn-sm">Edit</button>
-            
-          //</td>

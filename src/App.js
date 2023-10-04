@@ -31,9 +31,13 @@ function App() {
         <Route path="/Home" element={<Home />}></Route>
         
         <Route path="/Users" element={<Users />}></Route>
+        <Route path="/AddBookingDetail/update" component={AddBookingDetail} />
+
         <Route path="/AddUserDetail" element={<AddUserDetail />}></Route>
         <Route path="/Hotels" element={<Hotels />}></Route>
         <Route path="/Rooms" element={<Rooms />}> </Route>
+        <Route path="/Rooms/:id" element={<Rooms />}> </Route>
+        
         <Route path="/Reservation" element={<Reservation />} /> 
         
         <Route path="/AddHotelDetail" element={<AddHotelDetail />}></Route>

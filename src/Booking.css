@@ -1,0 +1,14 @@
+
+.container {
+    background-image: url('./hotelimages/bedroom.jpg'); 
+    background-size: cover;
+    background-position: center;
+    text-align: center;
+    padding: 100px;
+    height: 300px; 
+  }
+  
+  h5 {
+    color: white;
+  }
+  

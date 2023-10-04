@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
-
+import hotelImage from "./hotelimages/booking.jpg";
 function AddBookingDetail() {
   let location = useLocation();
   let navigate = useNavigate();
@@ -20,13 +20,16 @@ function AddBookingDetail() {
     bookingPrice: "",
     bookingDate: "",
   };
+  
   const [bookingdetails, setBookingDetails] = useState(IntitalBookingDetails);
-  const [bookingPrice, setBookingPrice] = useState(""); // Added state for booking price
+  const [bookingPrice, setBookingPrice] = useState(""); 
+  const [numberOfDays, setNumberOfDays] = useState(0);
+  
   const [systemDate, setSystemDate] = useState("");
   function getSystemDate() {
     const currentDate = new Date();
     const year = currentDate.getFullYear();
-    const month = String(currentDate.getMonth() + 1).padStart(2, "0"); // Add 1 to month because it's 0-based
+    const month = String(currentDate.getMonth() + 1).padStart(2, "0"); 
     const day = String(currentDate.getDate()).padStart(2, "0");
     const hours = String(currentDate.getHours()).padStart(2, "0");
     const minutes = String(currentDate.getMinutes()).padStart(2, "0");
@@ -35,7 +38,7 @@ function AddBookingDetail() {
   }
 
   useEffect(() => {
-    getSystemDate(); // Get the system date when the component mounts
+    getSystemDate(); 
   }, []);
 
   function onSubmitClick() {
@@ -46,25 +49,27 @@ function AddBookingDetail() {
 
   function handleOnBookingDetailChange(e) {
     let { name, value } = e.target;
-
+    calculateBookingPrice();
     setBookingDetails((prevstate) => {
       return { ...prevstate, [name]: value };
     });
   }
   function OnAddNewBooking() {
     let token = localStorage.getItem("Token");
-   // const newBookingDetails = { ...bookingdetails, bookingDate: systemDate };
+    let userId = localStorage.getItem("UserId");
+    const newBookingDetails = { ...bookingdetails, userId: userId };
 
     axios
-      .post("https://localhost:44328/api/Booking", bookingdetails, {
+      .post("https://localhost:44328/api/Booking", newBookingDetails, {
         headers: { Authorization: "Bearer " + token },
       })
       .then((response) => {
-        alert("New Booking added succesfully");
+        alert("Payment succesfully");
         setBookingDetails(IntitalBookingDetails);
       })
       .catch((err) => {
-        alert("Failed to add new booking");
+        alert(err.response.data);
+        console.log(err);
       });
   }
   useEffect(() => {
@@ -73,141 +78,158 @@ function AddBookingDetail() {
     }
   }, [location]);
   function OnUpdateBooking() {
+    
     let token = localStorage.getItem("Token");
     axios
-      .put("https://localhost:44328/api/Booking/Update", bookingdetails,{
-        headers: { Authorization: "Bearer " + token },})
+      .put("https://localhost:44328/api/Booking/Update", bookingdetails, {
+        headers: { Authorization: "Bearer " + token },
+      })
       .then((response) => {
-        alert(" bookings Updated succesfully");
+        alert("Booking Updated Succesfully");
         navigate("/Bookings");
       })
       .catch((err) => {
         alert("Failed to update booking");
       });
   }
+  
 
-  // Function to calculate booking price based on selected check-in and check-out dates
+ 
+  
+
+
   function calculateBookingPrice() {
     const checkin = new Date(checkinDate.current.value);
     const checkout = new Date(checkoutDate.current.value);
 
-    // Calculate the difference in days
+    
     const timeDifference = checkout - checkin;
-    const daysDifference = timeDifference / (1000 * 3600 * 24);
+    if(timeDifference != 0){
+      const daysDifference = timeDifference / (1000 * 3600 * 24);
 
-    // Calculate booking price based on your pricing logic
-    const pricePerNight = 450; // You can change this to your actual price
+      setNumberOfDays(daysDifference);
+    const pricePerNight = bookingdetails.roomPrice; 
     const totalPrice = daysDifference * pricePerNight;
-
+    bookingdetails.bookingPrice = totalPrice;
     setBookingPrice(totalPrice);
+    }
+    else{
+      const pricePerNight = bookingdetails.roomPrice; 
+      bookingdetails.bookingPrice = pricePerNight;
+      setBookingPrice(pricePerNight);
+      setNumberOfDays(0);
+    }
+    
   }
-
-  // Call calculateBookingPrice whenever check-in or check-out date changes
   useEffect(() => {
     calculateBookingPrice();
   }, [bookingdetails.checkinDate, bookingdetails.checkoutDate]);
 
-  
-
   return (
     <div className="container mt-5">
-      <div className="card">
-        <div className="card-body">
-          <h2 className="card-title">Booking Details</h2>
-          <form>
-            <div className="form-group">
-              <label htmlFor="roomId">Room Id</label>
-              <input
-                type="text"
-                className="form-control"
-                name="roomId"
-                onChange={handleOnBookingDetailChange}
-                ref={roomId}
-                value={bookingdetails.roomId}
-              />
+      <div className="card col-md-6 mx-auto">
+        <div className="row">
+          <div className="col-md-6">
+            <div className="card-body">
+              <h2 className="card-title">Booking Details</h2>
+              <form>
+                <div className="row">
+                  <div className="col-md-6">
+                    <div className="form-group">
+                      <label htmlFor="checkinDate">Check-in Date:</label>
+                      <input
+                        type="date"
+                        className="form-control"
+                        name="checkinDate"
+                        onChange={handleOnBookingDetailChange}
+                        ref={checkinDate}
+                        value={bookingdetails.checkinDate}
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="col-md-6">
+                    <div className="form-group">
+                      <label htmlFor="checkoutDate">Check-out Date:</label>
+                      <input
+                        type="date"
+                        className="form-control"
+                        name="checkoutDate"
+                        onChange={handleOnBookingDetailChange}
+                        ref={checkoutDate}
+                        value={bookingdetails.checkoutDate}
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="col-md-6">
+                    <div className="form-group">
+                      <label htmlFor="numberOfDays">No of Days:</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        name="numberOfDays"
+                        readOnly
+                        value={numberOfDays}
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="col-md-6">
+                    <div className="form-group">
+                      <label htmlFor="roomPrice">Room Price:</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        name="roomPrice"
+                        readOnly
+                        value={bookingdetails.roomPrice}
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="col-md-6">
+                    <div className="form-group">
+                      <label htmlFor="bookingPrice">Total Price:</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        name="bookingPrice"
+                        readOnly
+                        value={bookingdetails.bookingPrice}
+                      />
+                    </div>
+                  </div>
+                </div>
+                <br/>
+
+                {Boolean(bookingdetails.bookingDate) ? (
+                  <button
+                    type="button"
+                    onClick={OnUpdateBooking}
+                    className="btn btn-primary m-2"
+                  >
+                    Update
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={OnAddNewBooking}
+                    className="btn btn-success m-2"
+                  >
+                    Proceed Payment
+                  </button>
+                )}
+              </form>
             </div>
-            <div className="form-group">
-              <label htmlFor="userId">User Id</label>
-              <input
-                type="text"
-                className="form-control"
-                name="userId"
-                onChange={handleOnBookingDetailChange}
-                ref={userId}
-                value={bookingdetails.userId}
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="userName">User Name</label>
-              <input
-                type="text"
-                className="form-control"
-                name="userName"
-                onChange={handleOnBookingDetailChange}
-                ref={userName}
-                value={bookingdetails.userName}
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="checkinDate">Check-in Date</label>
-              <input
-                type="datetime-local"
-                className="form-control"
-                name="checkinDate"
-                onChange={handleOnBookingDetailChange}
-                ref={checkinDate}
-                value={bookingdetails.checkinDate}
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="checkoutDate">Check-out Date</label>
-              <input
-                type="datetime-local"
-                className="form-control"
-                name="checkoutDate"
-                onChange={handleOnBookingDetailChange}
-                ref={checkoutDate}
-                value={bookingdetails.checkoutDate}
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="bookingPrice">Booking Price</label>
-              <input
-                type="text"
-                className="form-control"
-                name="bookingPrice"
-                readOnly
-                value={bookingPrice}
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="bookingDate">Booking Date</label>
-              <input
-                type="datetime-local"
-                className="form-control"
-                name="bookingDate"
-                readOnly
-                value={systemDate}
-              />
-            </div>
-            {Boolean(location.state) ? (
-              <button
-                type="button"
-                onClick={OnUpdateBooking}
-                className="btn btn-primary"
-              >
-                Update
-              </button>
-            ) : (
-              <button
-                type="button"
-                onClick={OnAddNewBooking}
-                className="btn btn-primary"
-              >
-                Add Booking
-              </button>
-            )}
-          </form>
+          </div>
+          <div className="col-md-6 d-flex align-items-center justify-content-center">
+            <img src={hotelImage} alt="Booking Image" className="img-fluid" />
+          </div>
         </div>
       </div>
     </div>
