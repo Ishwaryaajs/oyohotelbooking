@@ -19,6 +19,7 @@ function AddBookingDetail() {
     checkoutDate: "",
     bookingPrice: "",
     bookingDate: "",
+    roomPrice:"",
   };
   
   const [bookingdetails, setBookingDetails] = useState(IntitalBookingDetails);

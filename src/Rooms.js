@@ -9,6 +9,8 @@ import hotelImage5 from './hotelimages/lux room.jpg';
 import hotelImage6 from './hotelimages/luxury bedroom.jpg';
 import hotelImage7 from './hotelimages/curtain.jpg';
 import hotelImage8 from './hotelimages/hike.jpg';
+import hotelImage9 from './hotelimages/newroom.jpg';
+import hotelImage10 from './hotelimages/newroom2.jpg';
 export function PostRooms() {
   const [rooms, setrooms] = useState([]);
   const [checkinDate, setCheckinDate] = useState(''); 
@@ -90,8 +92,12 @@ export function PostRooms() {
     navigate("/AddRoomDetail", { state: {room} });
   }
   function onBookNowClick(room) {
-    navigate("/AddBookingDetail", { state:  room });
-    
+    var newRoom = {
+      ...room,
+      checkinDate: checkinDate,
+      checkoutDate: checkoutDate,
+    };
+    navigate("/AddBookingDetail", { state: newRoom });
   }
 
   const isAdmin = localStorage.getItem("IsAdmin") === "false";
@@ -105,14 +111,14 @@ export function PostRooms() {
   return (
     <div className="row">
      {isAdmin && (
-              <div>
-                <label>Check-in Date:</label>
+              <div  margin="left">
+                <label style={{ marginLeft: '10px' }}>Check-in Date:</label>
                 <input
                   type="date"
                   value={checkinDate}
                   onChange={(e) => setCheckinDate(e.target.value)}
                 />
-                <label>Check-out Date:</label>
+                <label style={{ marginLeft: '10px' }}>Check-out Date:</label>
                 <input
                   type="date"
                   value={checkoutDate}
@@ -142,7 +148,11 @@ export function PostRooms() {
                   ? hotelImage6
                   : index === 6
                   ? hotelImage7
-                  : hotelImage8
+                  : index === 7 
+                  ? hotelImage8
+                  : index === 8
+                  ? hotelImage9
+                  :hotelImage10
               } 
               className="card-img-top hotel-image"
               alt={room.roomType}

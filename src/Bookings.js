@@ -101,6 +101,7 @@ export function PostBookings() {
   function OnEdit(item) {
     navigate("/AddBookingDetail", { state: item });
   }
+  
 
   function OnReject() {
     alert("Booking rejected");
