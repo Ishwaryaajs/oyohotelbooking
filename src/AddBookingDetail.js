@@ -65,8 +65,9 @@ function AddBookingDetail() {
         headers: { Authorization: "Bearer " + token },
       })
       .then((response) => {
-        alert("Payment succesfully");
+        alert("Payment Done succesfully");
         setBookingDetails(IntitalBookingDetails);
+        navigate("/Bookings");
       })
       .catch((err) => {
         alert(err.response.data);

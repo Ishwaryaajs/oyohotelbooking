@@ -9,6 +9,8 @@ import backgroundImage from './hotelimages/reservedpict.jpg';
 export function PostBookings() {
   const [bookings, setbookings] = useState([]);
   const [isDataAvailable, setDataAvailable] = useState(false);
+  
+  
   const componentRef = useRef();
   
 
@@ -37,12 +39,17 @@ export function PostBookings() {
   };
   useEffect(() => {
     getBooking();
+    
   }, []);
+  
+
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
-    documentTitle: "booking-data",
-    onAfterPrint: () => alert("Print Success"),
-  });
+    documentTitle: 'booking-data',
+    onAfterPrint: () => alert('Print Success')
+    
+
+});
   async function OnDelete(id) {
     try {
       const token = localStorage.getItem("Token");
@@ -101,7 +108,6 @@ export function PostBookings() {
   function OnEdit(item) {
     navigate("/AddBookingDetail", { state: item });
   }
-  
 
   function OnReject() {
     alert("Booking rejected");
@@ -225,6 +231,7 @@ export function PostBookings() {
                         onClick={handlePrint}
                         className="btn btn-outline-primary btn-sm m-2"
                       >
+                      
                         Download
                       </button>
                     </div>
